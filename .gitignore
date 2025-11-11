@@ -1,0 +1,16 @@
+# Compiled binaries
+disk
+*.o
+*.out
+*.exe
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Object files
+*.ko
+*.obj
+*.elf
