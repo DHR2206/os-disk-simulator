@@ -1,0 +1,9 @@
+# Compiled binaries
+disk
+
+# Object files
+*.o
+
+# Temporary files
+*.tmp
+*~
