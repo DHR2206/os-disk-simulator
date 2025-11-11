@@ -449,10 +449,7 @@ pair<int, int> Disk::DoSATF(const vector<Request>& rList) {
         int track = blockToTrackMap[req.block];
         double angle = blockToAngleMap[req.block];
 
-        // Estimate seek time
-        int dist = abs(armTrack - track);
-        
-        // This uses the arm's *current* position (armX1) vs. the target's
+        // Estimate seek time using the arm's current position (armX1) vs. the target's
         double seekEst = abs((tracks[track] - (trackWidth / 2.0)) - armX1) / armSpeedBase;
 
         // Estimate rotate time
