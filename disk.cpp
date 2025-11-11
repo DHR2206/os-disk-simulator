@@ -366,7 +366,16 @@ void Disk::SwitchState(State newState) {
 }
 
 bool Disk::RadiallyCloseTo(double a1, double a2) {
+    // Handle wrap-around: the shortest distance between two angle
     double v = abs(a1 - a2);
+
+    if (v > 180.0) {
+
+        v = 360.0 - v;
+
+    }
+    // Ensure targetAngle is positive
+    if (targetAngle < 0) targetAngle += 360.0;
     // Be a bit more tolerant for float comparison
     return v < (rotateSpeed + 0.0001);
 }
@@ -374,10 +383,10 @@ bool Disk::RadiallyCloseTo(double a1, double a2) {
 bool Disk::DoneWithTransfer() {
     int angleOffset = blockAngleOffset[armTrack];
     double targetAngle = fmod(blockToAngleMap[currentBlock] + angleOffset, 360);
-
     if (RadiallyCloseTo(angle, targetAngle)) {
         SwitchState(STATE_DONE);
         requestCount++;
+        
         return true;
     }
     return false;
@@ -386,7 +395,9 @@ bool Disk::DoneWithTransfer() {
 bool Disk::DoneWithRotation() {
     int angleOffset = blockAngleOffset[armTrack];
     double targetAngle = fmod(blockToAngleMap[currentBlock] - angleOffset, 360);
-    
+    // Ensure targetAngle is positive (fmod can return negative values)
+
+    if (targetAngle < 0) targetAngle += 360.0;
     if (RadiallyCloseTo(angle, targetAngle)) {
         SwitchState(STATE_XFER);
         return true;
@@ -489,7 +500,7 @@ vector<Request> Disk::DoSSTF(const vector<Request>& rList) {
             trackList.clear();
             trackList.push_back(req);
             minDist = dist;
-        } else if (dist == 'O') { // <-- THIS IS THE BUG
+            } else if (dist == minDist) { // FIX: Compare to minDist, not character 'O'
             trackList.push_back(req);
         }
     }
